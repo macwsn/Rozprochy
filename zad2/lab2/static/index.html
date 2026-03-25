@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>API Explorer</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --ink: #111; --paper: #f7f3ec; --rule: #222;
+      --accent: #c0392b; --muted: #555; --border: #ccc;
+      --mono: 'Courier New', monospace;
+    }
+    body { font-family: Georgia, serif; background: var(--paper); color: var(--ink); min-height: 100vh; }
+
+    header { border-top: 6px solid var(--rule); border-bottom: 3px double var(--rule); padding: 18px 0 12px; text-align: center; margin-bottom: 32px; }
+    header .kicker { font-family: var(--mono); font-size: .72rem; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+    header h1 { font-size: 2.4rem; font-weight: 700; }
+    header .subtitle { font-style: italic; color: var(--muted); font-size: .95rem; margin-top: 6px; }
+
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px 60px; }
+
+    /* Form */
+    .query-box { border: 2px solid var(--rule); padding: 24px 28px; margin-bottom: 32px; }
+    .query-box legend { font-family: var(--mono); font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; background: var(--paper); padding: 0 6px; }
+    label { display: block; font-size: .88rem; color: var(--muted); margin-bottom: 6px; }
+    textarea { width: 100%; min-height: 70px; border: 1px solid var(--border); background: #fff; font-family: Georgia, serif; font-size: 1rem; padding: 10px 12px; resize: vertical; outline: none; }
+    textarea:focus { border-color: var(--rule); }
+
+    /* Example queries */
+    .examples { margin-top: 10px; display: flex; flex-wrap: wrap; gap: 6px; }
+    .example-btn { font-family: var(--mono); font-size: .72rem; border: 1px solid var(--border); background: #fff; padding: 4px 10px; cursor: pointer; color: var(--muted); }
+    .example-btn:hover { border-color: var(--rule); color: var(--ink); }
+
+    .btn-row { margin-top: 16px; display: flex; gap: 12px; align-items: center; }
+    button#submit-btn { background: var(--rule); color: var(--paper); border: none; font-family: var(--mono); font-size: .82rem; letter-spacing: .1em; text-transform: uppercase; padding: 10px 24px; cursor: pointer; }
+    button#submit-btn:hover { background: var(--accent); }
+    button#submit-btn:disabled { background: var(--border); cursor: not-allowed; }
+
+    #spinner { display: none; font-family: var(--mono); font-size: .85rem; color: var(--muted); margin-top: 14px; }
+    #spinner::before { content: ''; display: inline-block; width: 11px; height: 11px; border: 2px solid var(--muted); border-top-color: var(--rule); border-radius: 50%; animation: spin 1s linear infinite; margin-right: 8px; vertical-align: middle; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .error-banner { border: 1px solid var(--accent); background: #fff5f5; padding: 10px 14px; color: var(--accent); font-size: .9rem; margin-top: 14px; display: none; }
+
+    /* Response */
+    #response-panel { display: none; }
+    .response-header { border-top: 2px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 10px 0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+    .response-header h2 { font-size: 1rem; text-transform: uppercase; letter-spacing: .06em; font-family: var(--mono); }
+    .meta-right { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+    .chip { font-family: var(--mono); font-size: .72rem; padding: 2px 8px; border: 1px solid var(--rule); }
+    .chip.api { background: var(--rule); color: var(--paper); }
+    .chip.time { color: var(--muted); }
+
+    /* Log box */
+    .log-box { background: #1a1a1a; color: #a8ff78; font-family: var(--mono); font-size: .78rem; padding: 12px 16px; margin-bottom: 20px; border-radius: 2px; }
+    .log-box .log-line { margin: 2px 0; }
+    .log-box .log-line.req { color: #78c8ff; }
+    .log-box .log-line.ok  { color: #a8ff78; }
+    .log-box .log-line.err { color: #ff7878; }
+    details.raw-data { margin: 4px 0 0; }
+    details.raw-data summary { color: #ffda78; cursor: pointer; user-select: none; }
+    details.raw-data pre { margin-top: 6px; white-space: pre-wrap; word-break: break-all; color: #ccc; max-height: 260px; overflow-y: auto; }
+
+    /* Answer */
+    .answer-body { font-size: 1rem; line-height: 1.75; }
+    .answer-body h1, .answer-body h2, .answer-body h3 { margin: 1.1em 0 .4em; }
+    .answer-body h2 { font-size: 1.15rem; border-bottom: 1px solid var(--border); padding-bottom: 3px; }
+    .answer-body p { margin: .6em 0; }
+    .answer-body ul, .answer-body ol { padding-left: 1.5em; margin: .4em 0 .7em; }
+    .answer-body li { margin: .25em 0; }
+    .answer-body strong { font-weight: 700; }
+    .answer-body em { font-style: italic; }
+
+    /* Catalog */
+    .catalog-strip { border-top: 1px solid var(--border); margin-top: 40px; padding-top: 18px; }
+    .catalog-strip h3 { font-family: var(--mono); font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; }
+    .api-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 6px; }
+    .api-card { border: 1px solid var(--border); padding: 7px 10px; font-size: .78rem; }
+    .api-card strong { display: block; margin-bottom: 2px; }
+    .api-card span { color: var(--muted); font-style: italic; }
+
+    footer { text-align: center; font-family: var(--mono); font-size: .7rem; color: var(--border); margin-top: 48px; border-top: 1px solid var(--border); padding-top: 10px; }
+    footer a { color: var(--muted); }
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="kicker">Powered by Gemini &amp; Public APIs</p>
+  <h1>API Explorer</h1>
+  <p class="subtitle">Ask anything — Gemini picks the right sources and synthesizes an answer</p>
+</header>
+
+<div class="container">
+
+  <fieldset class="query-box">
+    <legend>Ask a question</legend>
+    <label for="query">Question</label>
+    <textarea id="query" placeholder="Type your question or pick an example below…"></textarea>
+
+    <div class="examples" id="examples"></div>
+
+    <div class="btn-row">
+      <button id="submit-btn" onclick="submitQuery()">Ask &rarr;</button>
+    </div>
+    <div id="spinner">Fetching data and synthesizing answer…</div>
+    <div class="error-banner" id="error-banner"></div>
+  </fieldset>
+
+  <section id="response-panel">
+    <div class="response-header">
+      <h2>Answer</h2>
+      <div class="meta-right" id="meta-chips"></div>
+    </div>
+    <div class="log-box" id="log-box"></div>
+    <div class="answer-body" id="answer-body"></div>
+  </section>
+
+  <div class="catalog-strip">
+    <div class="api-grid" id="api-grid">Loading…</div>
+  </div>
+</div>
+
+<script>
+  const EXAMPLES = [
+    "What are some interesting facts about the number 42?",
+    "Tell me everything about Italy — geography, population and language, current wether etc",
+    "I'm bored, suggest something fun to do and cheer me up with a joke"
+  ];
+
+  // Populate example buttons
+  document.getElementById('examples').innerHTML = EXAMPLES.map(q =>
+    `<button class="example-btn" onclick="useExample(this)">${q}</button>`
+  ).join('');
+
+  function useExample(btn) {
+    document.getElementById('query').value = btn.textContent;
+  }
+
+  // Load catalog
+  async function loadCatalog() {
+    try {
+      const r = await fetch('/api/v1/apis');
+      const apis = await r.json();
+      document.getElementById('api-grid').innerHTML = apis.map(a =>
+        `<div class="api-card"><strong>${esc(a.name)}</strong><span>${esc(a.topics.slice(0,3).join(', '))}</span></div>`
+      ).join('');
+    } catch { document.getElementById('api-grid').textContent = 'Could not load catalog.'; }
+  }
+  loadCatalog();
+
+  // Submit
+  async function submitQuery() {
+    const query = document.getElementById('query').value.trim();
+    if (query.length < 3) { showError('Please enter at least 3 characters.'); return; }
+    if (query.length > 500) { showError('Max 500 characters.'); return; }
+
+    setLoading(true);
+    clearError();
+    document.getElementById('response-panel').style.display = 'none';
+
+    try {
+      const resp = await fetch('/api/v1/query', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ query }),
+      });
+      const data = await resp.json();
+      if (!resp.ok) { showError(data.detail || `Error ${resp.status}`); return; }
+      render(data);
+    } catch { showError('Network error — is the server running?'); }
+    finally { setLoading(false); }
+  }
+
+  function render(data) {
+    // Chips
+    document.getElementById('meta-chips').innerHTML =
+      data.apis_used.map(a => `<span class="chip api">${esc(a.name)}</span>`).join('') +
+      `<span class="chip time">${data.processing_time_ms} ms</span>`;
+
+    // Log box
+    const logLines = data.apis_used.map(a => {
+      const raw = a.raw_data ? JSON.stringify(a.raw_data, null, 2) : '(no data)';
+      return '<div class="log-line req">\u2192 GET ' + esc(a.url_called) + '</div>' +
+             '<div class="log-line ok">\u2713 ' + esc(a.name) + '</div>' +
+             '<details class="raw-data"><summary>\u25b6 raw response</summary><pre>' + esc(raw) + '</pre></details>';
+    }).join('');
+    document.getElementById('log-box').innerHTML =
+      '<div class="log-line">[API calls for: "' + esc(data.query) + '"]</div>' + logLines;
+
+    // Answer — simple markdown render
+    document.getElementById('answer-body').innerHTML = mdToHtml(data.answer);
+
+    const panel = document.getElementById('response-panel');
+    panel.style.display = 'block';
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+
+  // Minimal markdown → HTML
+  function mdToHtml(md) {
+    const lines = md.split('\n');
+    let html = '', inUl = false, inOl = false;
+    const closeL = () => { if (inUl) { html += '</ul>'; inUl = false; } if (inOl) { html += '</ol>'; inOl = false; } };
+    for (const raw of lines) {
+      const line = raw;
+      const h = line.match(/^(#{1,4})\s+(.*)/);
+      if (h) { closeL(); html += `<h${h[1].length}>${inline(esc(h[2]))}</h${h[1].length}>`; continue; }
+      const ul = line.match(/^[*\-]\s+(.*)/);
+      if (ul) { if (!inUl) { closeL(); html += '<ul>'; inUl = true; } html += `<li>${inline(esc(ul[1]))}</li>`; continue; }
+      const ol = line.match(/^\d+\.\s+(.*)/);
+      if (ol) { if (!inOl) { closeL(); html += '<ol>'; inOl = true; } html += `<li>${inline(esc(ol[1]))}</li>`; continue; }
+      closeL();
+      html += line.trim() === '' ? '<br>' : `<p>${inline(esc(line))}</p>`;
+    }
+    closeL();
+    return html;
+  }
+
+  function inline(t) {
+    return t
+      .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
+      .replace(/\*(.+?)\*/g, '<em>$1</em>')
+      .replace(/`(.+?)`/g, '<code>$1</code>');
+  }
+
+  function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function setLoading(on) {
+    document.getElementById('spinner').style.display = on ? 'block' : 'none';
+    document.getElementById('submit-btn').disabled = on;
+  }
+  function showError(msg) {
+    const b = document.getElementById('error-banner');
+    b.textContent = msg; b.style.display = 'block';
+  }
+  function clearError() {
+    const b = document.getElementById('error-banner');
+    b.style.display = 'none'; b.textContent = '';
+  }
+
+  document.getElementById('query').addEventListener('keydown', e => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') submitQuery();
+  });
+</script>
+</body>
+</html>
