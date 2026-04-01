@@ -49,9 +49,9 @@ public class CalcI implements Calc {
 	}
 
 	@Override
-	public float avg(long[] list, Current __current){
+	public float avg(long[] list, Current __current) throws Demo.NoInput {
 		if (list.length == 0){
-			throw new Excpetion();
+			throw new Demo.NoInput();
 		}
 		float sum = 0;
 		for(long val: list){

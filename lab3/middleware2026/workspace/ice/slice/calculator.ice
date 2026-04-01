@@ -22,7 +22,7 @@ module Demo
   {
     long add(int a, int b);
     long subtract(int a, int b);
-    float avg(LongSeq list);
+    float avg(LongSeq list) throws NoInput;
     void op(A a1, short b1); //załóżmy, że to też jest operacja arytmetyczna ;)
   };
 

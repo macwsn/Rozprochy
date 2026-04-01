@@ -33,7 +33,7 @@ public class IceClient {
 			if (obj1 == null) throw new Error("Invalid proxy");
 
 			// Referencja do drugiego obiektu calc33 (wspólny serwant z calc11)
-			ObjectPrx base2 = communicator.stringToProxy("calc/calc33:tcp -h 127.0.0.2 -p 10000 -z : udp -h 127.0.0.2 -p 10000 -z");
+			ObjectPrx base2 = communicator.stringToProxy("calc/calc33:tcp -h 127.0.0.1 -p 10010 -z : udp -h 127.0.0.1 -p 10010 -z");
 			CalcPrx obj2 = CalcPrx.checkedCast(base2);
 			if (obj2 == null) throw new Error("Invalid proxy for calc33");
 
@@ -161,6 +161,24 @@ public class IceClient {
 							a = new A((short) 11, 22, 33.0f, "ala ma kota");
 							obj2.op(a, (short) 44);
 							System.out.println("DONE (calc33)");
+							break;
+						case "avg":
+							try {
+								long[] seq = {1, 2, 3, 4, 5};
+								float avg = obj1.avg(seq);
+								System.out.println("AVG = " + avg);
+							} catch (Demo.NoInput e) {
+								System.out.println("ERROR: empty sequence");
+							}
+							break;
+						case "avg empty":
+							try {
+								long[] seq = {};
+								float avg = obj1.avg(seq);
+								System.out.println("AVG = " + avg);
+							} catch (Demo.NoInput e) {
+								System.out.println("ERROR: empty sequence (NoInput exception caught)");
+							}
 							break;
 						case "x":
 						case "":
