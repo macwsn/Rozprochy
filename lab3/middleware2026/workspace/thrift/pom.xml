@@ -55,6 +55,7 @@
     </dependencies>
 
     <build>
+        <sourceDirectory>${project.basedir}/src</sourceDirectory>
         <plugins>
 
             <!-- Kompilator Javy -->
@@ -105,7 +106,7 @@
                                 <argument>java</argument>
                                 <argument>-out</argument>
                                 <argument>${project.build.directory}/generated-sources/thrift</argument>
-                                <argument>${project.basedir}/src/main/thrift/calculator.thrift</argument>
+                                <argument>${project.basedir}/calculator.thrift</argument>
                             </arguments>
                         </configuration>
                     </execution>

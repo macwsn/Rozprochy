@@ -26,7 +26,7 @@ public class ThriftClient
 
 		String opt = "simple"; //"simple"; //simple | multiplex | non-block | asyn | multi-thread
 
-		String host = "127.0.0.2";
+		String host = "127.0.0.1";
 
 		TProtocol protocol = null;
 		TTransport transport = null;
