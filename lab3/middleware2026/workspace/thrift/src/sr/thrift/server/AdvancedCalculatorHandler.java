@@ -4,6 +4,7 @@ import org.apache.thrift.TException;
 
 import sr.gen.thrift.OperationType;
 import sr.gen.thrift.InvalidArguments;
+import sr.gen.thrift.Stats;
 import sr.gen.thrift.AdvancedCalculator;
 
 // Generated code
@@ -54,8 +55,22 @@ public class AdvancedCalculatorHandler implements AdvancedCalculator.Iface {
 
 	
 	@Override
+	public Stats stats(java.util.List<Double> data) throws InvalidArguments, TException {
+		System.out.println("AdvCalcHandler#" + id + " stats() with " + data.size() + " elements");
+		if (data.isEmpty()) {
+			throw new InvalidArguments(1, "empty list");
+		}
+		double min = data.get(0), max = data.get(0), sum = 0;
+		for (double v : data) {
+			if (v < min) min = v;
+			if (v > max) max = v;
+			sum += v;
+		}
+		return new Stats(min, max, sum / data.size(), sum, data.size());
+	}
+
+	@Override
 	public int subtract(int num1, int num2) throws TException {
-		// TODO Auto-generated method stub
 		return 0;
 	}
 
