@@ -1,0 +1,9 @@
+compact:
+call 77
+response 67
+json:
+call 89
+response 74
+binary:
+call 74
+reply 67

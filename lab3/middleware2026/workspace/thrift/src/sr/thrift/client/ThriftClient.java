@@ -47,9 +47,9 @@ public class ThriftClient
 			{
 				transport = new TSocket(host, 9080);
 
-				//protocol = new TBinaryProtocol(transport);
+				protocol = new TBinaryProtocol(transport);
 				//protocol = new TJSONProtocol(transport);
-				protocol = new TCompactProtocol(transport);
+				//protocol = new TCompactProtocol(transport);
 
 				synCalc1 = new Calculator.Client(protocol);
 				synAdvCalc1 = new AdvancedCalculator.Client(protocol); //wskazuje na ten sam zdalny obiekt - dlaczego?
