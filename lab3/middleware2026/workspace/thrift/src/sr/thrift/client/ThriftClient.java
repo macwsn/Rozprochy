@@ -11,6 +11,7 @@ import sr.gen.thrift.AdvancedCalculator;
 import sr.gen.thrift.Calculator;
 import sr.gen.thrift.Calculator.AsyncClient.add_call;
 import sr.gen.thrift.OperationType;
+import sr.gen.thrift.Stats;
 
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.protocol.TBinaryProtocol;
@@ -26,7 +27,7 @@ public class ThriftClient
 
 		String opt = "simple"; //"simple"; //simple | multiplex | non-block | asyn | multi-thread
 
-		String host = "127.0.0.2";
+		String host = "127.0.0.1";
 
 		TProtocol protocol = null;
 		TTransport transport = null;
@@ -46,9 +47,9 @@ public class ThriftClient
 			{
 				transport = new TSocket(host, 9080);
 
-				//protocol = new TBinaryProtocol(transport);
+				protocol = new TBinaryProtocol(transport);
 				//protocol = new TJSONProtocol(transport);
-				protocol = new TCompactProtocol(transport);
+				//protocol = new TCompactProtocol(transport);
 
 				synCalc1 = new Calculator.Client(protocol);
 				synAdvCalc1 = new AdvancedCalculator.Client(protocol); //wskazuje na ten sam zdalny obiekt - dlaczego?
@@ -108,6 +109,12 @@ public class ThriftClient
 					} else if (line.equals("op2")) {
 						double res = synAdvCalc1.op(OperationType.AVG, new HashSet<Double>());
 						System.out.println("op(AVG, ()) returned " + res);
+					} else if (line.equals("stats1")) {
+						Stats s = synAdvCalc1.stats(java.util.Arrays.asList(3.0, 1.0, 4.0, 1.5, 9.0, 2.6));
+						System.out.println("stats: min=" + s.min + " max=" + s.max + " avg=" + s.avg + " sum=" + s.sum + " count=" + s.count);
+					} else if (line.equals("stats2")) {
+						Stats s = synAdvCalc1.stats(java.util.Arrays.asList());
+						System.out.println("stats: " + s);
 					} else if (line.equals("x")) {
 						// Nothing to do
 					} else {

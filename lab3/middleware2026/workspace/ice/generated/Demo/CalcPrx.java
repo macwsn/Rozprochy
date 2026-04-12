@@ -102,13 +102,26 @@ public interface CalcPrx extends com.zeroc.Ice.ObjectPrx
     }
 
     default float avg(long[] list)
+        throws NoInput
     {
         return avg(list, com.zeroc.Ice.ObjectPrx.noExplicitContext);
     }
 
     default float avg(long[] list, java.util.Map<String, String> context)
+        throws NoInput
     {
-        return _iceI_avgAsync(list, context, true).waitForResponse();
+        try
+        {
+            return _iceI_avgAsync(list, context, true).waitForResponseOrUserEx();
+        }
+        catch(NoInput ex)
+        {
+            throw ex;
+        }
+        catch(com.zeroc.Ice.UserException ex)
+        {
+            throw new com.zeroc.Ice.UnknownUserException(ex.ice_id(), ex);
+        }
     }
 
     default java.util.concurrent.CompletableFuture<java.lang.Float> avgAsync(long[] list)
@@ -130,7 +143,7 @@ public interface CalcPrx extends com.zeroc.Ice.ObjectPrx
      **/
     default com.zeroc.IceInternal.OutgoingAsync<java.lang.Float> _iceI_avgAsync(long[] iceP_list, java.util.Map<String, String> context, boolean sync)
     {
-        com.zeroc.IceInternal.OutgoingAsync<java.lang.Float> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "avg", null, sync, null);
+        com.zeroc.IceInternal.OutgoingAsync<java.lang.Float> f = new com.zeroc.IceInternal.OutgoingAsync<>(this, "avg", null, sync, _iceE_avg);
         f.invoke(true, context, null, ostr -> {
                      ostr.writeLongSeq(iceP_list);
                  }, istr -> {
@@ -140,6 +153,12 @@ public interface CalcPrx extends com.zeroc.Ice.ObjectPrx
                  });
         return f;
     }
+
+    /** @hidden */
+    static final Class<?>[] _iceE_avg =
+    {
+        NoInput.class
+    };
 
     default void op(A a1, short b1)
     {

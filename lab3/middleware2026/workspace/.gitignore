@@ -1,0 +1,4 @@
+/ice/target
+**.class
+**.lst
+/thrift/target

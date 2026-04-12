@@ -76,9 +76,9 @@ public class ThriftServer {
 			TProtocolFactory protocolFactory3 = new TJSONProtocol.Factory();
 
 			//4. Utworzenie serwerów - ale to chyba *** nie będzie działać *** jak w zamierzeniu - dlaczego?
-			TServer server1 = new TSimpleServer(new Args(serverTransport).protocolFactory(protocolFactory1).processor(processor1));
-			TServer server2 = new TSimpleServer(new Args(serverTransport).protocolFactory(protocolFactory1).processor(processor2));
-			TServer server3 = new TSimpleServer(new Args(serverTransport).protocolFactory(protocolFactory1).processor(processor3));
+			TServer server1 = new TSimpleServer(new Args(serverTransport).protocolFactory(protocolFactory2).processor(processor1));
+			TServer server2 = new TSimpleServer(new Args(serverTransport).protocolFactory(protocolFactory2).processor(processor2));
+			TServer server3 = new TSimpleServer(new Args(serverTransport).protocolFactory(protocolFactory2).processor(processor3));
 
 			System.out.println("Starting simple server(s)...");
 			server1.serve();
@@ -103,8 +103,8 @@ public class ThriftServer {
 
 			TServerTransport serverTransport = new TServerSocket(9081);
 
-			TProtocolFactory protocolFactory = new TBinaryProtocol.Factory();
-			//TProtocolFactory protocolFactory = new TJSONProtocol.Factory();
+			//TProtocolFactory protocolFactory = new TBinaryProtocol.Factory();
+			TProtocolFactory protocolFactory = new TJSONProtocol.Factory();
 			//TProtocolFactory protocolFactory = new TCompactProtocol.Factory();
 			
 			TMultiplexedProcessor multiplex = new TMultiplexedProcessor();

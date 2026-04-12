@@ -21,7 +21,8 @@ public interface Calc extends com.zeroc.Ice.Object
 
     long subtract(int a, int b, com.zeroc.Ice.Current current);
 
-    float avg(long[] list, com.zeroc.Ice.Current current);
+    float avg(long[] list, com.zeroc.Ice.Current current)
+        throws NoInput;
 
     void op(A a1, short b1, com.zeroc.Ice.Current current);
 
@@ -101,8 +102,10 @@ public interface Calc extends com.zeroc.Ice.Object
      * @param inS -
      * @param current -
      * @return -
+     * @throws com.zeroc.Ice.UserException -
     **/
     static java.util.concurrent.CompletionStage<com.zeroc.Ice.OutputStream> _iceD_avg(Calc obj, final com.zeroc.IceInternal.Incoming inS, com.zeroc.Ice.Current current)
+        throws com.zeroc.Ice.UserException
     {
         com.zeroc.Ice.Object._iceCheckMode(null, current.mode);
         com.zeroc.Ice.InputStream istr = inS.startReadParams();

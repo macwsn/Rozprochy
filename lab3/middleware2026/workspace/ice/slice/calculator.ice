@@ -20,9 +20,9 @@ module Demo
 
   interface Calc
   {
-    long add(int a, int b);
-    long subtract(int a, int b);
-    float avg(LongSeq list);
+    idempotent long add(int a, int b);
+    idempotent long subtract(int a, int b);
+    idempotent float avg(LongSeq list) throws NoInput;
     void op(A a1, short b1); //załóżmy, że to też jest operacja arytmetyczna ;)
   };
 

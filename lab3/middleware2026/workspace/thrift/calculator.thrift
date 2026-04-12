@@ -33,7 +33,15 @@ exception InvalidArguments {
   1: i32 argNo,
   2: string reason
 }
- 
+
+struct Stats {
+  1: double min,
+  2: double max,
+  3: double avg,
+  4: double sum,
+  5: i32 count
+}
+
 service Calculator {
    i32 add(1:i32 num1, 2:i32 num2),
    i32 subtract(1:i32 num1, 2:i32 num2),
@@ -41,5 +49,6 @@ service Calculator {
     
  
 service AdvancedCalculator extends Calculator {
-   double op(1:OperationType type, 2: set<double> val) throws (1: InvalidArguments ex), 
+   double op(1:OperationType type, 2: set<double> val) throws (1: InvalidArguments ex),
+   Stats stats(1: list<double> data) throws (1: InvalidArguments ex),
 }
