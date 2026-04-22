@@ -74,7 +74,30 @@
             </extension>
         </extensions>
 
+        <sourceDirectory>src</sourceDirectory>
+
         <plugins>
+
+            <!-- Add gen/ as additional source root -->
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>3.4.0</version>
+                <executions>
+                    <execution>
+                        <id>add-gen-sources</id>
+                        <phase>generate-sources</phase>
+                        <goals><goal>add-source</goal></goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.basedir}/gen</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Java compiler -->
 
             <!-- Java compiler -->
             <plugin>
@@ -120,6 +143,8 @@
                     <pluginArtifact>
                         io.grpc:protoc-gen-grpc-java:${grpc.version}:exe:${os.detected.classifier}
                     </pluginArtifact>
+
+                    <skip>true</skip>
                 </configuration>
 
                 <executions>
