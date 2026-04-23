@@ -1,0 +1,65 @@
+# --- Python ---
+.venv/
+venv/
+env/
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+pip-log.txt
+pip-wheel-metadata/
+
+# --- Java / Maven ---
+target/
+*.class
+*.jar
+*.war
+*.ear
+.mvn/
+mvnw
+mvnw.cmd
+
+# --- Generated stubs / skeletons ---
+thrift/client_py/gen/
+thrift/gen-java/
+ice/generated/
+ice/client_py/gen/
+grpc/client_py/gen/
+grpc/gen/
+
+# --- Certificates / secrets ---
+certs/*.key
+certs/*.crt
+certs/*.csr
+certs/*.p12
+certs/*.jks
+certs/*.pem
+certs/*.srl
+certs/.rnd
+!certs/README.md
+!certs/make-certs.sh
+!certs/make-certs.ps1
+
+# --- Logs / runtime state ---
+*.log
+logs/
+state/
+ice/state/
+
+# --- IDE / OS ---
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# --- Misc ---
+*.bak
+*.tmp
+*.orig

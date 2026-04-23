@@ -1,0 +1,6 @@
+# Aggregate dev requirements for zad3 (lab4: A1 + I1 + I2 + I5).
+# Install once into a single venv at zad3/.venv
+
+-r thrift/client_py/requirements.txt
+-r ice/client_py/requirements.txt
+-r grpc/client_py/requirements.txt
