@@ -1,0 +1,13 @@
+{
+  "fridges": [
+    {"id": "f-kitchen-1", "subtype": "smart", "room": "kitchen", "tempC": 4.0},
+    {"id": "f-kitchen-2", "subtype": "basic", "room": "kitchen", "tempC": 5.0}
+  ],
+  "cameras": [
+    {"id": "c-kitchen-1", "subtype": "ptz",   "room": "kitchen"},
+    {"id": "c-kitchen-2", "subtype": "fixed",  "room": "kitchen"}
+  ],
+  "ovens": [
+    {"id": "o-kitchen-1", "room": "kitchen"}
+  ]
+}
