@@ -63,3 +63,6 @@ desktop.ini
 *.bak
 *.tmp
 *.orig
+
+
+**/*.md
