@@ -19,8 +19,24 @@ OVEN_MODES = {v: k for k, v in OvenMode._VALUES_TO_NAMES.items()}
 
 class ServerConn:
     def __init__(self, host, port, tls=False, ca=None):
-        if tls: sock = TSSLSocket(host, port, ca_certs=ca, validate=True)
-        else: sock = TSocket.TSocket(host, port)
+        self.host = host
+        self.port = port
+        self.tls = tls
+        self.ca = ca
+        self.transport = None
+        self.fridge = None
+        self.oven = None
+        self.camera = None
+        self._connect()
+
+    def _connect(self):
+        if self.transport and self.transport.isOpen():
+            self.transport.close()
+        if self.tls:
+            sock = TSSLSocket(self.host, self.port, ca_certs=self.ca, validate=True)
+        else:
+            sock = TSocket.TSocket(self.host, self.port)
+        sock.setTimeout(2000)
         self.transport = TTransport.TBufferedTransport(sock)
         proto = TBinaryProtocol.TBinaryProtocol(self.transport)
         self.fridge = FridgeService.Client(TMultiplexedProtocol(proto, "fridge"))
@@ -29,17 +45,23 @@ class ServerConn:
         self.transport.open()
 
     def close(self):
-        self.transport.close()
+        if self.transport:
+            self.transport.close()
 
 
 def list_all(servers):
     index = {}
     for s in servers:
         try:
+            if not s.transport.isOpen():
+                s._connect()
             for d in s.fridge.listDevices(): index[d.id] = (s, "fridge")
             for d in s.oven.listDevices():   index[d.id] = (s, "oven")
             for d in s.camera.listDevices(): index[d.id] = (s, "camera")
-        except TException as e: print(f"  warning: server unreachable ({e})")
+        except TException:
+            if s.transport.isOpen():
+                s.transport.close()
+            print(f"  warning: {s.host}:{s.port} unreachable")
     return index
 
 
