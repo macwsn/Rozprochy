@@ -24,8 +24,8 @@ service FridgeService extends DeviceRegistry {
   FridgeState read(1: string id) throws (1: NotFound nf),
   FridgeState setMode(1: string id, 2: FridgeMode m) throws (1: NotFound nf, 2: InvalidArgs ia),
   FridgeState setTemp(1: string id, 2: double tempC) throws (1: NotFound nf, 2: InvalidArgs ia),
-  FridgeState addItem(1: string id, 2: string item) throws (1: NotFound nf),
-  FridgeState removeItem(1: string id, 2: string item) throws (1: NotFound nf),
+  FridgeState addItem(1: string id, 2: string item) throws (1: NotFound nf, 2: Unsupported un),
+  FridgeState removeItem(1: string id, 2: string item) throws (1: NotFound nf, 2: Unsupported un),
 }
 
 service OvenService extends DeviceRegistry {

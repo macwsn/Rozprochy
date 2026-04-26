@@ -21,7 +21,11 @@ public abstract class CameraImpl {
     }
 
     protected CameraState state() {
-        return new CameraState(recording, new PtzPosition(ptz.pan, ptz.tilt, ptz.zoom));
+        CameraState s = new CameraState(recording, new PtzPosition(ptz.pan, ptz.tilt, ptz.zoom));
+        if (recording) {
+            s.setLastFrameUrl("http://" + room + ".local/cams/" + id + "/snapshot.jpg");
+        }
+        return s;
     }
 
     public abstract CameraState read();
