@@ -1,0 +1,13 @@
+{
+  "fridges": [
+    {"id": "f-garage-1", "subtype": "basic", "room": "garage", "tempC": 2.0}
+  ],
+  "cameras": [
+    {"id": "c-garage-1", "subtype": "ptz",   "room": "garage"},
+    {"id": "c-garage-2", "subtype": "ptz",   "room": "garage"},
+    {"id": "c-garage-3", "subtype": "fixed",  "room": "garage"}
+  ],
+  "ovens": [
+    {"id": "o-garage-1", "room": "garage"}
+  ]
+}
