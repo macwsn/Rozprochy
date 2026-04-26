@@ -11,6 +11,7 @@ def main():
     with open("certs/ca.crt", "rb") as f:
         ca = f.read()
     creds = grpc.ssl_channel_credentials(root_certificates=ca)
+    #creds = grpc.ssl_channel_credentials(root_certificates=open("certs/bad-ca.crt","rb").read())
     with grpc.secure_channel("localhost:50443", creds) as ch:
         stub = echo_pb2_grpc.EchoStub(ch)
         for msg in ["hello", "świat", "TLS!"]:

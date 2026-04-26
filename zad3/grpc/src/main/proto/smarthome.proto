@@ -1,0 +1,35 @@
+syntax = "proto3";
+package smarthome;
+option java_multiple_files = true;
+option java_package = "sr.grpc.smarthome";
+
+import "google/protobuf/empty.proto";
+
+enum FridgeMode  { FRIDGE_OFF = 0; FRIDGE_ON = 1; ECO = 2; PARTY = 3; }
+enum OvenMode    { OVEN_OFF = 0; BAKE = 1; GRILL = 2; PREHEAT = 3; }
+enum DeviceKind  { FRIDGE = 0; CAMERA = 1; OVEN = 2; }
+
+message DeviceInfo          { string id = 1; DeviceKind kind = 2; string subtype = 3; string room = 4; }
+message DeviceList          { repeated DeviceInfo devices = 1; }
+message DeviceId            { string id = 1; }
+
+message PtzPosition         { double pan = 1; double tilt = 2; double zoom = 3; }
+message FridgeState         { double temp_c = 1; bool door_open = 2; FridgeMode mode = 3; repeated string contents = 4; }
+message OvenState           { double temp_c = 1; OvenMode mode = 2; int32 minutes_left = 3; }
+message CameraState         { bool recording = 1; PtzPosition ptz = 2; string last_frame_url = 3; }
+
+message SetFridgeModeRequest { string id = 1; FridgeMode mode = 2; }
+message SetOvenRequest       { string id = 1; OvenMode mode = 2; double temp_c = 3; int32 minutes = 4; }
+message SetRecordingRequest  { string id = 1; bool on = 2; }
+message MovePtzRequest       { string id = 1; PtzPosition ptz = 2; }
+
+service SmartHome {
+    rpc ListDevices   (google.protobuf.Empty)   returns (DeviceList);
+    rpc GetFridge     (DeviceId)                returns (FridgeState);
+    rpc SetFridgeMode (SetFridgeModeRequest)    returns (FridgeState);
+    rpc GetOven       (DeviceId)                returns (OvenState);
+    rpc SetOven       (SetOvenRequest)          returns (OvenState);
+    rpc GetCamera     (DeviceId)                returns (CameraState);
+    rpc SetRecording  (SetRecordingRequest)     returns (CameraState);
+    rpc MovePtz       (MovePtzRequest)          returns (CameraState);
+}
